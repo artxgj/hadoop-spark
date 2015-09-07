@@ -15,7 +15,8 @@ The input file contains the adjacency list and has multiple lines in the followi
 
 Here, &lt;User&gt; is a unique integer ID corresponding to a unique user and &lt;Friends&gt; is a comma separated list of unique IDs corresponding to the friends of the user with the unique
 ￼ID &lt;User&gt;. Note that the friendships are mutual (i.e., edges are undirected): if A is friend with B then B is also friend with A. The data provided is consistent with that rule as there is an explicit entry for each side of each edge.
-Algorithm: Let us use a simple algorithm such that, for each user U, the algorithm rec- ommends N = 10 users who are not already friends with U, but have the most number of mutual friends in common with U.
+
+**Algorithm:** Let us use a simple algorithm such that, for each user U, the algorithm recommends N = 10 users who are not already friends with U, but have the most number of mutual friends in common with U.
 
 **Output:** The output should contain one line per user in the following format:
 
@@ -24,4 +25,4 @@ Algorithm: Let us use a simple algorithm such that, for each user U, the algorit
 where &lt;User&gt; is a unique ID corresponding to a user and &lt;Recommendations&gt; is a comma separated list of unique IDs corresponding to the algorithm’s recommendation of people that <User> might know, ordered in decreasing number of mutual friends. Even if a user has less than 10 second-degree friends, output all of them in decreasing order of the number of mutual friends. If a user has no friends, you can provide an empty list of recommendations. If there are recommended users with the same number of mutual friends, then output those user IDs in numerically ascending order.
 Also, please provide a description of how you are going to use MapReduce jobs to solve this problem. Don’t write more than 3 to 4 sentences for this: we only want a very high-level description of your strategy to tackle this problem.
 
-Note: It is possible to solve this question with a single MapReduce job. But if your solution requires multiple map reduce jobs, then that’s fine too.
+**Note:** It is possible to solve this question with a single MapReduce job. But if your solution requires multiple map reduce jobs, then that’s fine too.
