@@ -14,21 +14,46 @@ The list of friends &lt;Friends&gt; in each line of the input file can be though
 
 All pairs of friends have to be excluded from list of pairs of strangers.
 
+After identifying the pairs of strangers with a mutual friend, count how many mutual friends each pair of strangers have, which can be expressed as a tuple containing a tuple of user ids and a count, e.g. ((1, 2), 10).
+
+Transform the list of these tuples into tuples that look like (id1, (id2, count)), e.g., ((1,2), 10 ) becomes (1, (2, 10)). Now the key is an id instead of a tuple of two ids. As such, grouping the id keys together results in a list of potential friends for each person.
+
+I implemented two solutions for this problem. The two solutions differ in how they generate pairs of strangers with a mutual friend. The second solution solution 2 borrowed Stanford's CS246 Hadoop solution for identifying pairs of friends and pairs of people who share a mutual friend.
+
+Solution 1 was first implemented in Python and then in Scala. Solution 2 was implemented in Python.
 
 #### Solution 1
+
 1. Generate a RDD of pairs of friends.
 2. Self-join the RDD.
 3. Use the values (pairs of people) of the self-joined RDD to generate a new RDD.
-4. Remove pairs of friends (1) from the pairs of people (3).
+4. Remove pairs of friends [1] from the pairs of people [3].
 5. Filter out pairs that have the same id
 
 
 #### Solution 2
 Pairs of people are identified as friends with a 0 flag, while pairs of strangers who share a mutual friend are identified with a 1 flag.
+
     (1,2),1
     (4,5),0
+    (6,7),1
+    (6,7),
 
-    1 and 2 share a mutual friend. 4 and 5 are friends.
+    (1,2) share a mutual friend and (4,5) are friends. (6,7) were initially identified as having a mutual friend and later found to be friends as well.
 
 1. Generate a RDD of pairs of friends and pairs of people with a mutual friend.
-2. Remove the pairs of friends.
+2. Generate a RDD of pairs of friends.
+3. Generate a RDD of pairs of "stangers" by removing friends RDD [2] from the RDD of pairs of people [1]. The remainder will have entries that look like "(p1, p2), 1"
+
+
+### Execution Time Statistics
+| Solution                   | Average Execution Time (in secs) |
+|:---------------------------|:--------------------------------:|
+| Stanford's Hadoop Solution |              100.67              |
+| Solution 1 Spark/Scala     |              146.67              |
+| Solution 1 pySpark         |               286                |
+| Solution 2 pySpark         |              494.33              |
+
+I ran each solution three times and averaged their execution times. The Stanford Hadoop solution was downloaded from Stanford's CS246 site. All of the programs were executed in a pseudo-distributed YARN running under Mac Yosemite. I use Cloudera's CDH 5.4.4. distribution. I installed it in the Mac following the instructions from Cloudera's [blog](http://blog.cloudera.com/blog/2014/09/how-to-install-cdh-on-mac-osx-10-9-mavericks/).
+
+As to Apache Spark, I downloaded the 1.4.1 source code and compiled it.
