@@ -14,5 +14,5 @@ Execution Environment
 2. Cloudera's CDH 5.4.4 distribution.
 3. Apache Spark 1.4.1 (compiled from source).
 
-For those interested in running CDH natively in the Mac, checkout Cloudera's [blog](http://blog.cloudera.com/blog/2014/09/how-to-install-cdh-on-mac-osx-10-9-mavericks/).
+For those interested in running CDH natively in the Mac, check out Cloudera's [blog](http://blog.cloudera.com/blog/2014/09/how-to-install-cdh-on-mac-osx-10-9-mavericks/).
 
