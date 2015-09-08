@@ -37,9 +37,8 @@ object FriendRecom {
       reduceByKey((a, b) => a + b).
       map(elem => (elem._1._1, (elem._1._2, elem._2))).
       groupByKey().
-      map(tup2 => (tup2._1, recommend_new_friends(tup2._2.toList, 10)))
-
-      recommended_friends.map(tup2 => tup2._1.toString + "\t" + tup2._2.map(x=>x.toString).toArray.mkString(",")).
-        saveAsTextFile("hdfs://localhost:8020/user/art/cs246/output/recommended-friends-scala")
+      map(tup2 => (tup2._1, recommend_new_friends(tup2._2.toList, 10))).
+      map(tup2 => tup2._1.toString + "\t" + tup2._2.map(x=>x.toString).toArray.mkString(",")).
+      saveAsTextFile("hdfs://localhost:8020/user/art/cs246/output/recommended-friends-scala")
   }
 }

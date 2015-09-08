@@ -6,4 +6,4 @@ master=yarn
 ${SPARK_HOME}/bin/spark-submit \
      --class org.learningisfun.spark.FriendRecom \
      --master $master \
-     target/friendrecom-1.0-SNAPSHOT.jar
+     ../target/friendrecom-1.0-SNAPSHOT.jar

@@ -11,4 +11,4 @@ $SPARK_HOME/bin/spark-submit \
 ../src/main/python/recommend-friends-2.py \
 -i ${hdfs_input_url} \
 -o ${hdfs_output_url} \
--p 16
+-p 12
