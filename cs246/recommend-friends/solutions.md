@@ -44,16 +44,3 @@ Pairs of people are identified as friends with a 0 flag, while pairs of stranger
 1. Generate a RDD of pairs of friends and pairs of people with a mutual friend.
 2. Generate a RDD of pairs of friends.
 3. Generate a RDD of pairs of "stangers" by removing friends RDD [2] from the RDD of pairs of people [1]. The remainder will have entries that look like "(p1, p2), 1"
-
-
-### Execution Time Statistics
-| Solution                   | Average Execution Time (in secs) |
-|:---------------------------|:--------------------------------:|
-| Stanford's Hadoop Solution |              100.67              |
-| Solution 1 Spark/Scala     |              146.67              |
-| Solution 1 pySpark         |               286                |
-| Solution 2 pySpark         |              494.33              |
-
-I ran each solution three times and averaged their execution times. The Stanford Hadoop solution was downloaded from Stanford's CS246 site. All of the programs were executed in a pseudo-distributed YARN running under Mac Yosemite. I use Cloudera's CDH 5.4.4. distribution. I installed it in the Mac following the instructions from Cloudera's [blog](http://blog.cloudera.com/blog/2014/09/how-to-install-cdh-on-mac-osx-10-9-mavericks/).
-
-As to Apache Spark, I downloaded the 1.4.1 source code and compiled it.
