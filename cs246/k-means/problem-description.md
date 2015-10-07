@@ -21,7 +21,7 @@ The zip has 4 files:
 
 Use Euclidean distance (ie, the L2 norm) as the distance measure. Set number of iterations to 20 and number of clusters to 10. Use points in c1.txt for initialization.
 
-**Hint about job chaining:**
+_Hint about job chaining:_
 
 We need to run a sequence of Hadoop jobs where the output of one job will be the input for the next one. There are multiple ways to do this and you are free to use any method you are comfortable with. One simple way to handle a such a multistage job is to configure the output path of the first job to be the input path of the second and so on.
 
@@ -42,12 +42,12 @@ You will also need to share the location of centroid file with the mapper. There
 
 For more details see :
 ￼
-1. http://hadoop.apache.org/docs/r1.0.4/api/org/apache/hadoop/conf/Configuration. html#set(java.lang.String,java.lang.String)
-2. http://hadoop.apache.org/docs/r1.0.4/api/org/apache/hadoop/conf/Configuration. html#get(java.lang.String)
-3. http://hadoop.apache.org/docs/r1.0.4/api/org/apache/hadoop/mapreduce/Mapper. html#setup(org.apache.hadoop.mapreduce.Mapper.Context)
+ 1. http://hadoop.apache.org/docs/r1.0.4/api/org/apache/hadoop/conf/Configuration. html#set(java.lang.String,java.lang.String)
+ 2. http://hadoop.apache.org/docs/r1.0.4/api/org/apache/hadoop/conf/Configuration. html#get(java.lang.String)
+ 3. http://hadoop.apache.org/docs/r1.0.4/api/org/apache/hadoop/mapreduce/Mapper. html#setup(org.apache.hadoop.mapreduce.Mapper.Context)
 
 
-**Cluster Initialization:** The output of k-Means algorithm depends on the initial points chosen. There are many ways of choosing the initial points. We will compare two of them: random selection, and selecting points as far apart as possible.
+_Cluster Initialization:_ The output of k-Means algorithm depends on the initial points chosen. There are many ways of choosing the initial points. We will compare two of them: random selection, and selecting points as far apart as possible.
 
 
 **(b)**
