@@ -42,9 +42,9 @@ You will also need to share the location of centroid file with the mapper. There
 
 For more details see :
 ￼
- 1. http://hadoop.apache.org/docs/r1.0.4/api/org/apache/hadoop/conf/Configuration. html#set(java.lang.String,java.lang.String)
- 2. http://hadoop.apache.org/docs/r1.0.4/api/org/apache/hadoop/conf/Configuration. html#get(java.lang.String)
- 3. http://hadoop.apache.org/docs/r1.0.4/api/org/apache/hadoop/mapreduce/Mapper. html#setup(org.apache.hadoop.mapreduce.Mapper.Context)
+ 1. http://hadoop.apache.org/docs/r1.0.4/api/org/apache/hadoop/conf/Configuration.html#set (java.lang.String,java.lang.String)
+ 2. http://hadoop.apache.org/docs/r1.0.4/api/org/apache/hadoop/conf/Configuration.html#get (java.lang.String)
+ 3. http://hadoop.apache.org/docs/r1.0.4/api/org/apache/hadoop/mapreduce/Mapper.html#setup (org.apache.hadoop.mapreduce.Mapper.Context)
 
 
 _Cluster Initialization:_ The output of k-Means algorithm depends on the initial points chosen. There are many ways of choosing the initial points. We will compare two of them: random selection, and selecting points as far apart as possible.
