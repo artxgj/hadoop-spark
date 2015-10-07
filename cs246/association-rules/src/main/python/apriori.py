@@ -173,8 +173,10 @@ def main(args):
             baskets.append(set(basket))
 
     frequent_singles = prune_non_frequent(singles, support)
+
     print "Generate frequent pairs"
     frequent_pairs = find_frequent_pairs(baskets, frequent_singles, support)
+
     print "Generate frequent triples"
     frequent_triples = find_frequent_triples(baskets, frequent_pairs, support)
 
