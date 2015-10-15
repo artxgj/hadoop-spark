@@ -24,8 +24,13 @@ object FriendRecom {
   }
 
   def main(args: Array[String]) {
+    if ( args.length != 3 ) {
+        println("usage: FriendRecom input_uri output_uri partitions")
+        sys.exit(-1)
+    }
+
     val sc = new SparkContext(new SparkConf().setAppName("recommend-friends-scala"))
-    val file_rdd=sc.textFile("hdfs://localhost:8020/user/art/cs246/input/friendslist", 12)
+    val file_rdd=sc.textFile(args(0), args(2).toInt)
     val pairs_of_friends = file_rdd.flatMap(line => tuples_of_friends(line))
 
     val recommended_friends = pairs_of_friends.
@@ -39,6 +44,6 @@ object FriendRecom {
       groupByKey().
       map(tup2 => (tup2._1, recommend_new_friends(tup2._2.toList, 10))).
       map(tup2 => tup2._1.toString + "\t" + tup2._2.map(x=>x.toString).toArray.mkString(",")).
-      saveAsTextFile("hdfs://localhost:8020/user/art/cs246/output/recommended-friends-scala")
+      saveAsTextFile(args(1))
   }
 }
