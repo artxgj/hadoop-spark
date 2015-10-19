@@ -1,5 +1,6 @@
 package org.learningisfun.hadoop;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapreduce.Job;
@@ -14,28 +15,28 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Kmeans
 {
 
-    public static class FloatArrayWritable extends ArrayWritable {
-        public FloatArrayWritable() {
-            super(FloatWritable.class);
+    public static class DoubleArrayWritable extends ArrayWritable {
+        public DoubleArrayWritable() {
+            super(DoubleWritable.class);
         }
-
     }
 
 
     public static class KmeansCentroidMapper extends
-            Mapper<LongWritable, Text, IntWritable, FloatArrayWritable> {
+            Mapper<LongWritable, Text, IntWritable, DoubleArrayWritable> {
 
-        private ArrayList<ArrayList<Float>> centroids;
+        private ArrayList<ArrayList<Double>> centroids;
 
         @Override
         public void setup(Context context) {
             try
             {
-                centroids = new ArrayList<ArrayList<Float>>();
+                centroids = new ArrayList<ArrayList<Double>>();
                 URI[] cacheFiles = context.getCacheFiles();
                 for (URI cacheFile:cacheFiles) {
                     String filepath = cacheFile.toString();
@@ -54,38 +55,39 @@ public class Kmeans
         }
 
 
-        private float euclideanDistance(ArrayList<Float> coordinate, ArrayList<Float> centroid) {
+        private Double euclideanDistance(ArrayList<Double> coordinate, ArrayList<Double> centroid) {
             double sum = 0.0f;
 
             for (int i=0; i < coordinate.size(); i++)
                 sum += Math.pow(coordinate.get(i) - centroid.get(i), 2);
 
-            return (float) Math.sqrt(sum);
+            return Math.sqrt(sum);
         }
 
 
-        private int nearestCentroid(ArrayList<Float> coordinate) {
-            float minVal = Float.MAX_VALUE;
+        private int nearestCentroid(ArrayList<Double> coordinate) {
+            Double minVal = Double.MAX_VALUE;
             int centroidIndex = 0;
 
             int i = 0;
-            for (ArrayList<Float> centroid: centroids) {
-                float d = euclideanDistance(coordinate, centroid);
+            for (ArrayList<Double> centroid: centroids) {
+                Double d = euclideanDistance(coordinate, centroid);
                 if (d < minVal) {
                     minVal = d;
                     centroidIndex = i;
                 }
+                ++i;
             }
 
             return centroidIndex;
         }
 
-        private ArrayList<Float> lineToFloatsList(String line) {
-            ArrayList<Float> fl = new ArrayList<Float>();
+        private ArrayList<Double> lineToDoublesList(String line) {
+            ArrayList<Double> fl = new ArrayList<Double>();
             String[] tokens = line.split(" ");
 
             for (String token:tokens) {
-                fl.add(Float.valueOf(token.trim()));
+                fl.add(Double.valueOf(token.trim()));
             }
 
             return fl;
@@ -96,16 +98,16 @@ public class Kmeans
         public void map(LongWritable key, Text value, Context context)
             throws IOException, InterruptedException {
 
-            ArrayList<Float> featuresList = lineToFloatsList(value.toString());
-            FloatWritable[] fw = new FloatWritable[featuresList.size()];
+            ArrayList<Double> featuresList = lineToDoublesList(value.toString());
+            DoubleWritable[] dw = new DoubleWritable[featuresList.size()];
             int i =0;
 
-            for (Float feature: featuresList) {
-                fw[i++]  = new FloatWritable(feature.floatValue());
+            for (Double feature: featuresList) {
+                dw[i++]  = new DoubleWritable(feature.doubleValue());
             }
 
-            FloatArrayWritable faw = new FloatArrayWritable();
-            faw.set(fw);
+            DoubleArrayWritable faw = new DoubleArrayWritable();
+            faw.set(dw);
             int nc = nearestCentroid(featuresList);
             context.write(new IntWritable(nc), faw);
         }
@@ -116,7 +118,7 @@ public class Kmeans
                 in = new BufferedReader(new InputStreamReader(new FileInputStream(cacheFile)));
                 String line;
                 while ((line = in.readLine()) != null) {
-                    centroids.add(lineToFloatsList(line));
+                    centroids.add(lineToDoublesList(line));
                 }
             } finally {
                 IOUtils.closeStream(in);
@@ -126,22 +128,35 @@ public class Kmeans
 
 
     public static class KmeansCentroidReducer extends
-            Reducer<IntWritable, FloatArrayWritable, Text, Text> {
+            Reducer<IntWritable, DoubleArrayWritable, Text, Text> {
         @Override
-        public void reduce(IntWritable Key, Iterable <FloatArrayWritable> values, Context context)
+        public void reduce(IntWritable Key, Iterable <DoubleArrayWritable> values, Context context)
             throws IOException, InterruptedException {
 
-            System.out.println("Reduce " + Key.get());
-            for (FloatArrayWritable value: values) {
-                Writable[] fw =  value.get();
-                for (int i=0; i < fw.length; i++)
-                    System.out.print(fw[i] + " ");
-                System.out.println();
+            int n = 0;
+            double[] sum = null;
+            for (DoubleArrayWritable value: values) {
+                ++n;
+                Writable[] dw =  value.get();
+                if (sum == null) {
+                    sum = new double[dw.length];
+                    Arrays.fill(sum, 0.0);
+                }
 
+                for (int i=0; i < dw.length; i++) {
+                    DoubleWritable x = (DoubleWritable)  dw[i];
+                    sum[i] += x.get();
+                }
             }
-
-            System.out.println("....");
-
+            // calculate new centroid
+            Double[] centroid = new Double[sum.length];
+            for (int i=0; i < sum.length; i++) {
+                centroid[i] =  sum[i]/n;
+            }
+            String new_centroid  = StringUtils.join(centroid, ' ');
+            System.out.print("Reduce " + Key.get() + " sum.length = " + sum.length + "  n =" + n + "\n");
+            System.out.println(new_centroid);
+            context.write(new Text(new_centroid), new Text(""));
         }
     }
 
@@ -172,7 +187,7 @@ public class Kmeans
             job.setReducerClass(KmeansCentroidReducer.class);
 
             job.setMapOutputKeyClass( IntWritable.class );
-            job.setMapOutputValueClass( FloatArrayWritable.class );
+            job.setMapOutputValueClass( DoubleArrayWritable.class );
 
             job.setOutputKeyClass(Text.class);
             job.setOutputValueClass(Text.class);
