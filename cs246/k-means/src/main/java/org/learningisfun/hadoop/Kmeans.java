@@ -1,6 +1,9 @@
 package org.learningisfun.hadoop;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileStatus;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapreduce.Job;
@@ -154,8 +157,6 @@ public class Kmeans
                 centroid[i] =  sum[i]/n;
             }
             String new_centroid  = StringUtils.join(centroid, ' ');
-            System.out.print("Reduce " + Key.get() + " sum.length = " + sum.length + "  n =" + n + "\n");
-            System.out.println(new_centroid);
             context.write(new Text(new_centroid), new Text(""));
         }
     }
@@ -171,9 +172,10 @@ public class Kmeans
         String dataPath = args[1];
         String inputCentroidsPath = args[2];
         String outputBasePath = args[3];
+        String outputCentroidsPath = null;
 
         for (int i=1; i <= iterations; i++) {
-            String outputCentroidsPath = String.format("%s/iter-%05d", outputBasePath, i);
+            outputCentroidsPath = String.format("%s/iter-%05d", outputBasePath, i);
 
             Job job = Job.getInstance();
             job.setJarByClass(KmeansCentroidMapper.class);
@@ -185,7 +187,7 @@ public class Kmeans
 
             job.setMapperClass(KmeansCentroidMapper.class);
             job.setReducerClass(KmeansCentroidReducer.class);
-
+            job.setNumReduceTasks(1);
             job.setMapOutputKeyClass( IntWritable.class );
             job.setMapOutputValueClass( DoubleArrayWritable.class );
 
@@ -195,7 +197,22 @@ public class Kmeans
             if (!job.waitForCompletion(true)) {
                 System.exit(1);
             }
-            inputCentroidsPath = outputCentroidsPath;
+
+            if (outputCentroidsPath != null) {
+                Configuration config = new Configuration();
+                FileSystem fs =  FileSystem.get(config);
+                FileStatus[] files = fs.listStatus(new Path(outputCentroidsPath));
+
+                for (FileStatus file:files) {
+                    if (file.isFile() && file.getPath().getName().startsWith("part")) {
+                        inputCentroidsPath = new String(outputCentroidsPath + "/" + file.getPath().getName());
+                        break;
+                    }
+                }
+            }
+
+
         }
+
     }
 }
