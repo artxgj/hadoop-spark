@@ -1,2 +1,2 @@
 # hadoop-spark #
-My repo for learning data-related topics through programming in my free time.
+My repo for learning data-related topics during my free time.
