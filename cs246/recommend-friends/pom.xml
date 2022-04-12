@@ -12,7 +12,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <spark.version>1.4.1</spark.version>
     <cdh.version>cdh5.4.4</cdh.version>
-    <hadoop.version>2.6.0</hadoop.version>
+    <hadoop.version>3.2.3</hadoop.version>
     <java.version>1.8</java.version>
   </properties>
 
@@ -81,7 +81,7 @@
     <dependency>
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-common</artifactId>
-      <version>${hadoop.version}-${cdh.version}</version>
+      <version>${hadoop.version}</version>
      </dependency>
      <dependency>
      <groupId>org.apache.hadoop</groupId>
